@@ -28,5 +28,5 @@ Default admin comes from `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`. Change them
 - [x] PWA: manifest, maskable + Apple touch icons, service worker, offline page, install prompt (Android) / instructions (iOS)
 - [x] Store: catalog, product pages, Paystack checkout (card + MoMo) with webhook, gated PDF reader, admin upload with text extraction for the AI
 - [x] Forum: rooms, topics, threaded replies, like/dislike, ad slots (top, inline, sidebar) with click tracking
-- [ ] Blog + AI bot (daily articles, forum Q&A personas, testimonials, FB/IG sharing)
+- [x] Blog (SEO: meta tags, sitemap, robots) + AI bot: daily article from book TOC, forum questions + answers under persona names (AI-badged), reader reflections, Facebook/Instagram sharing. Run via `npm run bot:daily` or GET /api/cron/bot with `Authorization: Bearer $CRON_SECRET`
 - [ ] Admin panel, member dashboard extras, ads plans, jobs

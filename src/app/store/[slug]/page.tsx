@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { desc, eq } from "drizzle-orm";
-import { Star } from "lucide-react";
+import { Bot, Star } from "lucide-react";
 import { db, schema } from "@/db";
 import { getUser } from "@/lib/auth";
 import { canAccess } from "@/lib/orders";
@@ -82,13 +82,16 @@ export default async function ProductPage({ params, searchParams }: { params: { 
 
       {reviews.length > 0 && (
         <section className="mt-14">
-          <h2 className="font-display text-2xl font-semibold">What readers say</h2>
+          <h2 className="font-display text-2xl font-semibold">Reader reflections</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             {reviews.map((r) => (
               <figure key={r.id} className="card3d p-5">
-                <div className="flex gap-0.5 text-ember-400">{Array.from({ length: r.rating }).map((_, i) => <Star key={i} size={14} fill="currentColor" />)}</div>
-                <blockquote className="mt-2 text-sm text-white/80">{r.body}</blockquote>
-                <figcaption className="mt-3 text-xs text-white/50">{r.authorName}</figcaption>
+                {r.rating > 0 && <div className="flex gap-0.5 text-ember-400">{Array.from({ length: r.rating }).map((_, i) => <Star key={i} size={14} fill="currentColor" />)}</div>}
+                <blockquote className="text-sm text-white/80">{r.body}</blockquote>
+                <figcaption className="mt-3 flex items-center gap-2 text-xs text-white/50">
+                  {r.authorName}
+                  {r.aiGenerated && <span title="Written by the site's AI assistant from the book's content. Not a customer review." className="inline-flex items-center gap-1 rounded-full bg-saga-500/20 px-2 py-0.5 text-[11px] text-saga-400"><Bot size={11} /> AI</span>}
+                </figcaption>
               </figure>
             ))}
           </div>

@@ -14,6 +14,7 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   accent: "#8b5cf6",
   heroTitle: "Read. Learn. Belong.",
   heroSubtitle: "Digital books and courses, daily articles, and a living forum community.",
+  botAutoPublish: "true", // "false" = AI articles are saved as drafts for admin review
 };
 
 export async function getSettings() {
