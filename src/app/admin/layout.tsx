@@ -5,8 +5,8 @@ import { getUser } from "@/lib/auth";
 export const metadata = { title: { default: "Admin", template: "%s | Admin" }, robots: { index: false } };
 
 const LINKS = [
-  { href: "/admin", label: "Overview" },
-  { href: "/admin/products", label: "Books & Courses" },
+  ["/admin", "Overview"], ["/admin/products", "Books & Courses"], ["/admin/articles", "Articles"], ["/admin/bot", "AI Bot"],
+  ["/admin/slides", "Slider"], ["/admin/site", "Site & Menu"], ["/admin/ads", "Ads"], ["/admin/jobs", "Jobs"],
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -15,9 +15,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="container-x py-8">
       <nav className="mb-8 flex gap-2 overflow-x-auto pb-1">
-        {LINKS.map((l) => (
-          <Link key={l.href} href={l.href} className="btn-ghost !min-h-[38px] whitespace-nowrap">{l.label}</Link>
-        ))}
+        {LINKS.map(([href, label]) => <Link key={href} href={href} className="btn-ghost !min-h-[38px] whitespace-nowrap">{label}</Link>)}
+        <Link href="/forum" className="btn-ghost !min-h-[38px] whitespace-nowrap">Forum ↗</Link>
       </nav>
       {children}
     </div>

@@ -20,3 +20,8 @@ export const timeAgo = (d: Date | number) => {
 };
 
 export const cn = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(" ");
+
+/** Only http(s) links are allowed for ads/jobs/slides, which blocks javascript: and data: URLs. */
+export const isHttpUrl = (s: string) => {
+  try { return ["http:", "https:"].includes(new URL(s).protocol); } catch { return false; }
+};

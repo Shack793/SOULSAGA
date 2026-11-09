@@ -56,7 +56,7 @@ export default async function Dashboard() {
         </section>
 
         <section className="card3d p-5">
-          <h2 className="font-display text-xl font-semibold">My ads</h2>
+          <div className="flex items-center justify-between"><h2 className="font-display text-xl font-semibold">My ads</h2><Link href="/dashboard/ads/new" className="text-sm text-saga-400">Place an ad</Link></div>
           {ads.length === 0 ? (
             <p className="mt-3 text-sm text-white/60">No ads yet.</p>
           ) : (
