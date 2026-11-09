@@ -2,7 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   images: { remotePatterns: [{ protocol: "https", hostname: "**" }] },
-  experimental: { serverComponentsExternalPackages: ["pdf-parse", "@prisma/client"] },
+  experimental: {
+    serverComponentsExternalPackages: ["pdf-parse", "better-sqlite3"],
+    serverActions: { bodySizeLimit: "60mb" }, // book PDFs + cover images
+  },
   async headers() {
     return [
       {

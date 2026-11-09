@@ -26,7 +26,7 @@ Default admin comes from `ADMIN_EMAIL` / `ADMIN_PASSWORD` in `.env`. Change them
 
 - [x] Foundation: schema, auth (member/admin), design system, responsive header, slider, home page
 - [x] PWA: manifest, maskable + Apple touch icons, service worker, offline page, install prompt (Android) / instructions (iOS)
-- [ ] Store + Paystack (card & MoMo) + PDF reader
+- [x] Store: catalog, product pages, Paystack checkout (card + MoMo) with webhook, gated PDF reader, admin upload with text extraction for the AI
 - [ ] Forum (rooms, topics, replies, like/dislike, ad slots)
 - [ ] Blog + AI bot (daily articles, forum Q&A personas, testimonials, FB/IG sharing)
 - [ ] Admin panel, member dashboard extras, ads plans, jobs
