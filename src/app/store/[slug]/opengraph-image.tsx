@@ -27,15 +27,20 @@ function fontFile(name: string) {
   return fs.readFileSync(path.join(process.cwd(), "public", "fonts", name));
 }
 
+function truncate(text: string, max: number) {
+  if (text.length <= max) return text;
+  return `${text.slice(0, max).replace(/\s+\S*$/, "")}…`;
+}
+
 export default async function Image({ params }: { params: { slug: string } }) {
   const p = await db.query.products.findFirst({ where: eq(schema.products.slug, params.slug) });
   const cover = p ? coverDataUrl(p.coverUrl) : null;
-  const title = (p?.title || "SoulSaga").slice(0, 90);
+  const title = truncate(p?.title || "SoulSaga", 90);
   const author = p?.author || "";
-  const description = (p?.description || "Books, courses and a community for the journey inward.")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 180);
+  const description = truncate(
+    (p?.description || "Books, courses and a community for the journey inward.").replace(/\s+/g, " ").trim(),
+    180
+  );
   const kind = (p?.kind || "BOOK").replace("BOOK", "Ebook").replace("COURSE", "Course");
 
   return new ImageResponse(
