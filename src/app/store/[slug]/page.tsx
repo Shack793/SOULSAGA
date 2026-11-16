@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { desc, eq } from "drizzle-orm";
 import { ArrowLeft, BookOpen, Bot, CheckCircle2, Download, Lock, Star } from "lucide-react";
 import { db, schema } from "@/db";
@@ -9,6 +10,7 @@ import { canAccess } from "@/lib/orders";
 import { startCheckout } from "@/app/actions/checkout";
 import { formatMoney } from "@/lib/utils";
 import BookCover3D from "@/components/BookCover3D";
+import ShareButton from "@/components/ShareButton";
 
 export const dynamic = "force-dynamic";
 
@@ -17,10 +19,13 @@ const find = (slug: string) => db.query.products.findFirst({ where: eq(schema.pr
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const p = await find(params.slug);
   if (!p) return {};
+  const description = p.description.replace(/\s+/g, " ").trim().slice(0, 155);
   return {
     title: p.title,
-    description: p.description.slice(0, 155),
-    openGraph: { title: p.title, description: p.description.slice(0, 155), images: p.coverUrl ? [p.coverUrl] : undefined },
+    description,
+    alternates: { canonical: `/store/${p.slug}` },
+    openGraph: { type: "article", title: p.title, description, url: `/store/${p.slug}` },
+    twitter: { card: "summary_large_image", title: p.title, description },
   };
 }
 
@@ -37,6 +42,10 @@ export default async function ProductPage({ params, searchParams }: { params: { 
   const preview = (p.pdfText || "").trim().slice(0, 1600);
   const free = p.priceMinor === 0;
   const nextPath = `/store/${p.slug}`;
+  const h = headers();
+  const host = h.get("host") || "soulwealth.jesghana.com";
+  const proto = h.get("x-forwarded-proto") || (host.includes("localhost") || host.includes(".test") ? "http" : "https");
+  const shareUrl = `${proto}://${host}/store/${p.slug}`;
 
   return (
     <div className="container-x py-8 sm:py-10">
@@ -100,6 +109,8 @@ export default async function ProductPage({ params, searchParams }: { params: { 
                   Read a free preview
                 </a>
               )}
+
+              <ShareButton url={shareUrl} title={p.title} description={p.description} />
 
               {!user ? (
                 <Link href={`/login?next=${encodeURIComponent(nextPath)}`} className="btn-ghost">

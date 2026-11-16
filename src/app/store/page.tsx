@@ -23,7 +23,6 @@ export default async function Store({ searchParams }: { searchParams: { kind?: s
   return (
     <div className="container-x py-10">
       <h1 className="font-display text-4xl font-semibold">Books &amp; Courses</h1>
-      <p className="mt-2 text-white/60">Pay once with card or mobile money, then read online anytime.</p>
 
       {searchParams.payment && (
         <p role="status" className="mt-4 rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
