@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { eq } from "drizzle-orm";
+import { Download } from "lucide-react";
 import { db, schema } from "@/db";
 import { getUser } from "@/lib/auth";
 import { canAccess } from "@/lib/orders";
@@ -24,6 +25,11 @@ export default async function Read({ params, searchParams }: { params: { slug: s
           <Link href={`/store/${p.slug}`} className="text-sm text-saga-400">← {p.title}</Link>
           {searchParams.paid && <p role="status" className="mt-1 text-sm text-emerald-300">Payment confirmed. Enjoy your book!</p>}
         </div>
+        {p.pdfPath && (
+          <a href={`/api/books/${p.slug}/download`} className="btn-ghost !min-h-[38px] shrink-0">
+            <Download size={15} /> Download
+          </a>
+        )}
       </div>
       {p.pdfPath ? (
         <PdfReader src={`/api/books/${p.slug}/file`} title={p.title} />

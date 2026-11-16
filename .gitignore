@@ -3,6 +3,9 @@ node_modules
 out
 .env
 .env.local
+server.md
+deploy_key
+deploy_key.pub
 *.db
 *.db-wal
 *.db-shm

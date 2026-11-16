@@ -1,0 +1,65 @@
+name: Deploy SoulSaga to Namecheap
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-soulwealth
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Load SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy over SSH
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+            -o IdentitiesOnly=yes -o BatchMode=yes \
+            "$SSH_USER@$SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          APP_DIR=/var/www/soulwealth
+          cd "$APP_DIR"
+          git config --global --add safe.directory "$APP_DIR"
+          git fetch --prune origin
+          git reset --hard origin/main
+          npm ci --no-audit --no-fund
+          npm run db:push
+          npm run db:seed
+          npm run build
+          pm2 restart soulwealth --update-env || pm2 start npm --name soulwealth -- start
+          pm2 save
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3000 || true)
+            if [ "$code" = "200" ]; then
+              echo "Health check OK"
+              exit 0
+            fi
+            echo "Waiting for app... ($i/30, HTTP $code)"
+            sleep 2
+          done
+          echo "Health check failed"
+          pm2 logs soulwealth --lines 60 --nostream || true
+          exit 1
+          REMOTE
